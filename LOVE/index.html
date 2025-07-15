@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Para Guada - Propuesta Animada</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #ffe6f0, #fff);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    text-align: center;
+  }
+  #container {
+    max-width: 600px;
+    padding: 20px;
+    background: #fff0f5;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  .hidden { display: none; }
+  button {
+    background-color: #ff66a3;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+    z-index: 10;
+  }
+  .fade {
+    animation: fadeIn 1s;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  #btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    position: relative;
+    height: 50px;
+  }
+  #noBtn {
+    margin-left: 20px;
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease;
+  }
+  /* Videos en extremos para pantalla sí */
+  #yesScreen {
+    position: relative;
+    padding: 20px;
+  }
+  #videoLeft, #videoRight {
+    position: absolute;
+    bottom: 10px;
+    width: 100px;
+    height: 80px;
+    border-radius: 15px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(255,102,163,0.7);
+    z-index: 5;
+  }
+  #videoLeft {
+    left: -110px;
+  }
+  #videoRight {
+    right: -110px;
+  }
+  /* Animación contenedores */
+  .animContainer {
+    margin-top: 15px;
+    height: 150px;
+  }
+  /* Nota musical para segunda animación */
+  #musicNote {
+    font-size: 100px;
+    color: #ff66a3;
+    opacity: 0;
+    animation: vibrate 1.5s infinite;
+    margin: auto;
+  }
+  @keyframes vibrate {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px) rotate(-10deg); }
+    40% { transform: translate(-2px, -2px) rotate(10deg); }
+    60% { transform: translate(2px, 2px) rotate(-10deg); }
+    80% { transform: translate(2px, -2px) rotate(10deg); }
+    100% { transform: translate(0); }
+  }
+  /* Estrella para tercer animación */
+  #star {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    opacity: 0;
+    fill: gold;
+    animation: twinkle 2s infinite alternate;
+  }
+  @keyframes twinkle {
+    from {opacity: 0.5; transform: scale(1);}
+    to {opacity: 1; transform: scale(1.2);}
+  }
+  /* Sol para cuarto animación */
+  #sun {
+    width: 120px;
+    height: 120px;
+    margin: auto;
+    opacity: 0;
+    fill: orange;
+    animation: shine 3s infinite alternate;
+  }
+  @keyframes shine {
+    from {filter: drop-shadow(0 0 2px orange);}
+    to {filter: drop-shadow(0 0 12px orange);}
+  }
+
+  /* Botón para activar música */
+  #playMusicBtn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background-color: #ff66a3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 1000;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+<button id="playMusicBtn">🎵 Reproducir Música</button>
+
+<audio id="music" loop>
+  <source src="Manuel Medrano - Donde Nadie Pueda Ir.mp3" type="audio/mpeg" />
+  Tu navegador no soporta audio.
+</audio>
+
+<div id="container">
+  <!-- Pantalla 0 -->
+  <div id="screen0" class="fade">
+    <h2>Para ti, mi niña linda, mi princesa, mi amor 💖</h2>
+    <p>Desde que apareciste, cambió todo 💗</p>
+    <button onclick="next()">Comenzar</button>
+  </div>
+
+  <!-- Pantalla 1 con hilo rojo animado y corazón delgado -->
+  <div id="screen1" class="hidden fade">
+    <p>Desde que el destino tejió tu nombre en mi historia,<br />la distancia se volvió solo un número entre dos corazones.</p>
+    <div class="animContainer" style="height:120px;">
+      <svg id="heartSvg" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+        <path id="heartPath" fill="none" stroke="red" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"
+          d="
+          M10 30
+          C 10 10, 40 10, 60 30
+          C 80 10, 110 10, 110 30
+          C 110 50, 60 55, 10 30
+          "
+        />
+      </svg>
+    </div>
+    <button onclick="next()">Siguiente</button>
+  </div>
+
+  <!-- Pantalla 2 -->
+  <div id="screen2" class="hidden fade">
+    <p>Ríes, y el mundo calla para escucharte.<br />Eres poesía sin necesidad de rima.</p>
+    <div class="animContainer" style="font-size: 0;">
+      <div id="musicNote">&#9835;</div>
+    </div>
+    <button onclick="next()">Siguiente</button>
+  </div>
+
+  <!-- Pantalla 3 -->
+  <div id="screen3" class="hidden fade">
+    <p>No hay cielo más alto que el que habito cuando pienso en ti, mi princesa.</p>
+    <div class="animContainer">
+      <svg id="star" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" >
+        <polygon points="32 4 39 24 60 24 42 38 48 58 32 46 16 58 22 38 4 24 25 24" />
+      </svg>
+    </div>
+    <button onclick="next()">Siguiente</button>
+  </div>
+
+  <!-- Pantalla 4 -->
+  <div id="screen4" class="hidden fade">
+    <p>Podría cruzar mares, países y silencios,<br />con tal de verte sonreír una vez más.</p>
+    <div class="animContainer">
+      <svg id="sun" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" >
+        <circle cx="32" cy="32" r="12" />
+        <line x1="32" y1="4" x2="32" y2="16" stroke="orange" stroke-width="3"/>
+        <line x1="32" y1="48" x2="32" y2="60" stroke="orange" stroke-width="3"/>
+        <line x1="4" y1="32" x2="16" y2="32" stroke="orange" stroke-width="3"/>
+        <line x1="48" y1="32" x2="60" y2="32" stroke="orange" stroke-width="3"/>
+        <line x1="13" y1="13" x2="22" y2="22" stroke="orange" stroke-width="3"/>
+        <line x1="42" y1="42" x2="51" y2="51" stroke="orange" stroke-width="3"/>
+        <line x1="13" y1="51" x2="22" y2="42" stroke="orange" stroke-width="3"/>
+        <line x1="42" y1="22" x2="51" y2="13" stroke="orange" stroke-width="3"/>
+      </svg>
+    </div>
+    <button onclick="next()">Siguiente</button>
+  </div>
+
+  <!-- Pantalla 5: Propuesta -->
+  <div id="screen5" class="hidden fade">
+    <h2>¿Quieres ser oficialmente mi novia?</h2>
+    <div id="btnContainer">
+      <button onclick="yes()">💖 Sí</button>
+      <button id="noBtn">💔 No</button>
+    </div>
+  </div>
+
+  <!-- Pantalla Sí -->
+  <div id="yesScreen" class="hidden fade">
+    <h2>¡Soy el hombre más feliz del mundo!</h2>
+    <p>Gracias por elegirme, mi niña linda 💕</p>
+    <video id="videoLeft" src="gatobailando.mp4" autoplay loop muted></video>
+    <video id="videoRight" src="gatobailando2.mp4" autoplay loop muted></video>
+  </div>
+
+  <!-- Pantalla No -->
+  <div id="noScreen" class="hidden fade">
+    <p>😢</p>
+    <p>Te entiendo. Aun así, gracias por haber existido en mi historia.</p>
+  </div>
+</div>
+
+<script>
+  // Variables para animaciones
+  const heartPath = document.getElementById('heartPath');
+  const heartLength = heartPath.getTotalLength();
+  const heartSvg = document.getElementById('heartSvg');
+  const musicNote = document.getElementById('musicNote');
+  const star = document.getElementById('star');
+  const sun = document.getElementById('sun');
+
+  // Configurar animación corazón
+  heartPath.style.strokeDasharray = heartLength;
+  heartPath.style.strokeDashoffset = heartLength;
+
+  function animateHeart() {
+    let start = null;
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      let progress = timestamp - start;
+      let draw = heartLength - (heartLength * progress) / 4000;
+      if (draw < 0) draw = 0;
+      heartPath.style.strokeDashoffset = draw;
+      if (progress < 4000) {
+        requestAnimationFrame(step);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Mostrar y animar según pantalla
+  function showAnimation(screenIndex) {
+    heartSvg.style.display = 'none';
+    musicNote.style.opacity = 0;
+    star.style.opacity = 0;
+    sun.style.opacity = 0;
+
+    if(screenIndex === 1){
+      heartSvg.style.display = 'block';
+      heartPath.style.strokeDashoffset = heartLength; // reiniciar para animar
+      animateHeart();
+    } else if(screenIndex === 2){
+      musicNote.style.opacity = 1;
+    } else if(screenIndex === 3){
+      star.style.opacity = 1;
+    } else if(screenIndex === 4){
+      sun.style.opacity = 1;
+    }
+  }
+
+  // Navegación entre pantallas
+  let current = 0;
+  function next() {
+    document.getElementById(`screen${current}`).classList.add('hidden');
+    current++;
+    document.getElementById(`screen${current}`).classList.remove('hidden');
+    showAnimation(current);
+  }
+
+  // Función sí: muestra fuegos artificiales y pantalla sí
+  function yes() {
+    document.getElementById('screen5').classList.add('hidden');
+    document.getElementById('yesScreen').classList.remove('hidden');
+    launchFireworks();
+  }
+
+  // Fuegos artificiales con confetti
+  function launchFireworks() {
+    confetti({
+      particleCount: 150,
+      spread: 120,
+      origin: { y: 0.6 }
+    });
+  }
+
+  // Botón No que se mueve cuando intentan darle clic
+  const noBtn = document.getElementById('noBtn');
+  const btnContainer = document.getElementById('btnContainer');
+
+  noBtn.addEventListener('mouseenter', () => {
+    const containerRect = btnContainer.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+
+    const maxX = containerRect.width - btnRect.width;
+    const maxY = containerRect.height - btnRect.height;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+  });
+
+  // Mostrar pantalla 0 al cargar
+  window.onload = () => {
+    document.getElementById('screen0').classList.remove('hidden');
+  };
+
+  // Música y botón para activarla
+  const music = document.getElementById('music');
+  const playMusicBtn = document.getElementById('playMusicBtn');
+
+  music.pause(); // Pausar música al inicio
+
+  playMusicBtn.addEventListener('click', () => {
+    music.play();
+    playMusicBtn.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
